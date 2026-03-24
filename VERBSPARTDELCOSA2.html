@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qüestionari: El cos i els verbs (Nivell A2)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        p.intro {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+        .question-block {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .question-text {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .verb-help {
+            font-style: italic;
+            color: #7f8c8d;
+            font-weight: normal;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-label:hover {
+            background-color: #eef2f5;
+            border-color: #bdc3c7;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        .correct-ans {
+            background-color: #d4edda !important;
+            border-color: #28a745 !important;
+            color: #155724;
+        }
+        .wrong-ans {
+            background-color: #f8d7da !important;
+            border-color: #dc3545 !important;
+            color: #721c24;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            color: #fff;
+            background-color: #3498db;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .feedback {
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.3em;
+            padding: 15px;
+        }
+        /* Mobile responsive */
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Test: El cos humà i els verbs</h1>
+    <p class="intro">Tria la combinació correcta de <b>verb i part del cos</b> per omplir els espais de cada frase. Fixa't bé en quan passa l'acció (present, passat perfet o futur).</p>
+
+    <div id="quiz-container"></div>
+
+    <button onclick="comprovarRespostes()">Comprovar els resultats</button>
+    <div id="resultat" class="feedback"></div>
+
+    <script>
+        const preguntes = [
+            { text: "1. Cada dia jo em _______ (rentar) les _______ abans de dinar.", options: ["rento / mans", "he rentat / orelles", "rentaré / mans", "rento / cames"], correct: 0 },
+            { text: "2. Aquest matí en Pere s' _______ (trencar) la _______ esquiant.", options: ["trenca / boca", "ha trencat / cama", "trencarà / cama", "ha trencat / panxa"], correct: 1 },
+            { text: "3. Demà jo _______ (moure) els _______ a la classe de ball.", options: ["moc / dits", "he mogut / peus", "mouré / peus", "mouré / cabells"], correct: 2 },
+            { text: "4. Quan ella té por, sempre _______ (tancar) els _______.", options: ["tancarà / ulls", "tanca / braços", "ha tancat / llavis", "tanca / ulls"], correct: 3 },
+            { text: "5. Avui nosaltres ens _______ (tallar) els _______ a la perruqueria.", options: ["hem tallat / cabells", "tallem / dits", "tallarem / cabells", "hem tallat / ulls"], correct: 0 },
+            
+            { text: "6. La setmana que ve jo em _______ (tallar) les _______ de les mans.", options: ["tallo / ungles", "tallaré / ungles", "he tallat / cames", "tallaré / orelles"], correct: 1 },
+            { text: "7. Cada matí jo em _______ (raspallar) les _______ després d'esmorzar.", options: ["he raspallat / mans", "raspallaré / dents", "raspallo / dents", "raspallo / esquenes"], correct: 2 },
+            { text: "8. Aquest matí el gos m' _______ (mossegar) el _______.", options: ["mossega / nas", "mossegarà / peu", "ha mossegat / genoll", "ha mossegat / peu"], correct: 3 },
+            { text: "9. Si fas aquests exercicis, tu _______ (estirar) l' _______ aquesta nit.", options: ["estiraràs / esquena", "estires / panxa", "has estirat / esquena", "estiraràs / ull"], correct: 0 },
+            { text: "10. Quan estic refredat, em _______ (torcar) el _______ amb un mocador.", options: ["he torcat / coll", "torco / nas", "torcaré / nas", "torco / peu"], correct: 1 },
+            
+            { text: "11. Aquest any la Maria s' _______ (operar) de l' _______ dreta.", options: ["opera / espatlla", "operarà / orella", "ha operat / orella", "ha operat / llengua"], correct: 2 },
+            { text: "12. Si menges tan ràpid ara, després et _______ (fer) mal la _______.", options: ["fa / cara", "ha fet / panxa", "farà / mà", "farà / panxa"], correct: 3 },
+            { text: "13. A la classe d'anglès jo sempre _______ (obrir) la _______ per parlar fort.", options: ["obro / boca", "he obert / gola", "obriré / boca", "obro / cama"], correct: 0 },
+            { text: "14. Aquesta tarda m' _______ (cremar) la _______ amb la sopa calenta.", options: ["cremo / boca", "he cremat / llengua", "cremaré / llengua", "he cremat / cama"], correct: 1 },
+            { text: "15. Demà els alumnes _______ (aixecar) el _______ per fer una pregunta.", options: ["aixequen / cap", "han aixecat / braç", "aixecaran / braç", "aixecaran / peu"], correct: 2 },
+            
+            { text: "16. A la feina, nosaltres _______ (teclejar) amb els _______ a l'ordinador.", options: ["hem teclejat / peus", "teclejarem / dits", "teclegem / nassos", "teclegem / dits"], correct: 3 },
+            { text: "17. Avui t' _______ (picar) al _______ amb el cantó de la taula?", options: ["has picat / colze", "piques / turmell", "picaràs / colze", "has picat / llavi"], correct: 0 },
+            { text: "18. L'any que ve, en Lluís es _______ (tatuar) el _______.", options: ["tatua / braç", "tatuarà / pit", "ha tatuat / pit", "tatuarà / cap"], correct: 1 },
+            { text: "19. A l'hivern, tu sempre et _______ (tapar) el _______ amb una bufanda.", options: ["has tapat / genoll", "taparàs / coll", "tapes / coll", "tapes / dit"], correct: 2 },
+            { text: "20. Aquest matí m' _______ (torçar) el _______ jugant a bàsquet.", options: ["torço / coll", "torçaré / turmell", "he torçat / nas", "he torçat / turmell"], correct: 3 },
+            
+            { text: "21. Si caus d'aquesta manera, et _______ (fer) mal a l' _______ demà.", options: ["faràs / espatlla", "fas / orella", "has fet / espatlla", "faràs / boca"], correct: 0 },
+            { text: "22. El meu avi no hi sent bé i sempre _______ (apropar) l' _______.", options: ["ha apropat / ull", "apropa / orella", "aproparà / orella", "apropa / cama"], correct: 1 },
+            { text: "23. Aquest matí la meva germana s' _______ (pintar) els _______ de color vermell.", options: ["pinta / ulls", "pintarà / llavis", "ha pintat / llavis", "ha pintat / colzes"], correct: 2 },
+            { text: "24. Demà al matí jo em _______ (rentar) la _______ amb aigua ben freda.", options: ["rento / esquena", "he rentat / cara", "rentaré / panxa", "rentaré / cara"], correct: 3 },
+            { text: "25. En Marc _______ (tocar) molt bé la guitarra amb les _______.", options: ["toca / mans", "ha tocat / cames", "tocarà / mans", "toca / orelles"], correct: 0 },
+            
+            { text: "26. Avui els nens s' _______ (embrutar) els _______ de fang al parc.", options: ["embruten / cabells", "han embrutat / genolls", "embrutaran / genolls", "han embrutat / llavis"], correct: 1 },
+            { text: "27. Després de la marató de demà, vosaltres _______ (estirar) les _______.", options: ["estireu / braços", "heu estirat / cames", "estirareu / cames", "estirareu / orelles"], correct: 2 },
+            { text: "28. Jo sempre _______ (girar) el _______ abans de creuar el carrer.", options: ["he girat / peu", "giraré / cap", "giro / braç", "giro / cap"], correct: 3 },
+            { text: "29. Aquest matí tu m' _______ (tocar) el _______ per cridar la meva atenció.", options: ["has tocat / braç", "toques / nas", "tocaràs / braç", "has tocat / cabell"], correct: 0 },
+            { text: "30. El metge et _______ (mirar) la _______ la setmana que ve per veure si estàs bé.", options: ["mira / panxa", "mirarà / gola", "ha mirat / gola", "mirarà / ungla"], correct: 1 }
+        ];
+
+        const contenidor = document.getElementById("quiz-container");
+
+        // Generar el HTML de les preguntes
+        preguntes.forEach((p, index) => {
+            let optionsHtml = "";
+            p.options.forEach((opt, i) => {
+                optionsHtml += `
+                    <label class="option-label" id="label-q${index}-o${i}">
+                        <input type="radio" name="q${index}" value="${i}">
+                        ${opt}
+                    </label>
+                `;
+            });
+
+            contenidor.innerHTML += `
+                <div class="question-block" id="qblock-${index}">
+                    <div class="question-text">${p.text}</div>
+                    <div class="options">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            `;
+        });
+
+        function comprovarRespostes() {
+            let encerts = 0;
+
+            preguntes.forEach((p, index) => {
+                // Netejar colors anteriors
+                for(let i=0; i<4; i++) {
+                    let lbl = document.getElementById(`label-q${index}-o${i}`);
+                    lbl.classList.remove('correct-ans', 'wrong-ans');
+                }
+
+                let seleccionat = document.querySelector(`input[name="q${index}"]:checked`);
+                
+                if (seleccionat) {
+                    let valorTriat = parseInt(seleccionat.value);
+                    if (valorTriat === p.correct) {
+                        encerts++;
+                        document.getElementById(`label-q${index}-o${valorTriat}`).classList.add('correct-ans');
+                    } else {
+                        document.getElementById(`label-q${index}-o${valorTriat}`).classList.add('wrong-ans');
+                        document.getElementById(`label-q${index}-o${p.correct}`).classList.add('correct-ans'); // Mostrar la correcta
+                    }
+                } else {
+                    // Si no ha marcat res, mostrem quina era la correcta igualment
+                    document.getElementById(`label-q${index}-o${p.correct}`).classList.add('correct-ans');
+                }
+            });
+
+            let resultatDiv = document.getElementById("resultat");
+            if (encerts === 30) {
+                resultatDiv.style.color = "#28a745";
+                resultatDiv.style.backgroundColor = "#d4edda";
+                resultatDiv.innerHTML = `🌟 Perfecte! Has encertat ${encerts} de 30 preguntes.`;
+            } else {
+                resultatDiv.style.color = "#721c24";
+                resultatDiv.style.backgroundColor = "#f8d7da";
+                resultatDiv.innerHTML = `Has encertat ${encerts} de 30. Revisa les respostes en verd!`;
+            }
+        }
+    </script>
+</body>
+</html>
